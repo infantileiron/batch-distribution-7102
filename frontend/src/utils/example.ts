@@ -1,0 +1,1 @@
+export function example(){return {name:'新色样对照·各8条',source:'qichuan_new_batches.json',batch_a:Array.from({length:8},(_,i)=>({sample_id:'NEW-A'+i,l:68+(i-3.5)*.2,a:12+Math.sin(i)*.4,b:18+Math.cos(i)*.5})),batch_b:Array.from({length:8},(_,i)=>({sample_id:'NEW-B'+i,l:68+(i-3.5)*.7,a:12+(i%2?1:-1)*1.8,b:18+Math.cos(i)*1.2}))}}

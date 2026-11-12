@@ -1,0 +1,2 @@
+import {useState} from 'react';
+export function useAction(){const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [notice,setNotice]=useState('');async function act(fn:()=>Promise<unknown>,message='已保存'){setBusy(true);setError('');setNotice('');try{await fn();setNotice(message)}catch(e){setError((e as Error).message)}finally{setBusy(false)}}return {busy,error,notice,act,setError}}

@@ -1,0 +1,1 @@
+export function Heading({index,title,detail}:{index:string;title:string;detail:string}){return <header className="page-heading"><p className="eyebrow">QICHUAN COLOR LAB / {index}</p><h1>{title}</h1><p>{detail}</p></header>}

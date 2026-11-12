@@ -1,0 +1,1 @@
+import {RUN_STATUSES} from '../../constants/enums';import type {Run} from '../../types/domain';export function Status({value}:{value:Run['status']}){return <span className={'status '+value}>{RUN_STATUSES[value]}</span>}

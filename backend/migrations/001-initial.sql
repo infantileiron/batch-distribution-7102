@@ -1,0 +1,3 @@
+-- Initial schema source: src/models/*.py; metadata.create_all creates missing tables.
+-- Raw batches and label-independent policy frozen per study; immutable run/review/report IDs.
+-- sigma DOUBLE, permutation counts/seed INTEGER; calculations NumPy Float64.
