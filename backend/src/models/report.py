@@ -5,6 +5,8 @@ class Report(Base):
  __tablename__='reports'
  id:Mapped[str]=mapped_column(String,primary_key=True)
  run_id:Mapped[str]=mapped_column(ForeignKey('distribution_runs.id'))
+ attempt_id:Mapped[str|None]=mapped_column(ForeignKey('run_attempts.id'),nullable=True)
+ attempt_no:Mapped[int|None]=mapped_column(Integer,nullable=True)
  review_id:Mapped[str]=mapped_column(ForeignKey('shift_reviews.id'),unique=True)
  title:Mapped[str]=mapped_column(String)
  published_by:Mapped[str]=mapped_column(String)

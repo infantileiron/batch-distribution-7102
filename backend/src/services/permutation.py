@@ -3,7 +3,7 @@ from src.services.distances import samples,pairwise
 from src.services.energy import score as energy_score
 from src.services.mmd import score as mmd_score,kernel_matrix
 
-def permutation_test(a,b,permutations=199,seed=2407,scaling='pooled_std',bandwidth='pooled_median',sigma=None):
+def permutation_test(a,b,permutations=199,seed=2407,scaling='pooled_std',bandwidth='pooled_median',sigma=None,progress=None):
  a,b=samples(a,b)
  if isinstance(permutations,bool) or not isinstance(permutations,int) or not 1<=permutations<=1999:raise ValueError('invalid permutation count')
  if isinstance(seed,bool) or not isinstance(seed,int) or seed<0:raise ValueError('invalid seed')
@@ -22,7 +22,8 @@ def permutation_test(a,b,permutations=199,seed=2407,scaling='pooled_std',bandwid
  else:raise ValueError('unknown bandwidth policy')
  kernel=kernel_matrix(distance,sigma);ia=list(range(n));ib=list(range(n,N));observed_energy=energy_score(distance,ia,ib);observed_mmd=mmd_score(kernel,ia,ib)
  rng=random.Random(seed);orders=[];energy_null=[];mmd_null=[]
- for _ in range(permutations):
+ for index in range(permutations):
+  if progress:progress()
   order=list(range(N));rng.shuffle(order);pa=sorted(order[:n]);pb=sorted(order[n:]);orders.append(order);energy_null.append(energy_score(distance,pa,pb));mmd_null.append(mmd_score(kernel,pa,pb))
  def result(observed,values):
   extreme=sum(value>=observed for value in values)

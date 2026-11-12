@@ -49,6 +49,8 @@ docker compose exec backend python -m scripts.seed_demo
 
 六实体 ColorBatchDataset、KernelPolicy、DistributionStudy、DistributionRun、ShiftReview、Report，贯穿表/model/schema/service/route、前端API/store/page。研究冻结原始批次及口径；运行保存原始读数、变换参数、统计、完整排列与分布；每次复核新增不可变版本。归档绑定最新接受复核ID，后续新复核不改变旧CSV。
 
+`distribution_runs` 是每份研究唯一的任务记录，`run_attempts` 按 `attempt_no` 追加不可变尝试。排队中加入计算中的运行都可撤销：排队中的尝试立即转为 `cancelled`；计算中的尝试登记 `cancel_requested_at`，worker 每完成一批共享排列检查一次并协作停止，已在途的结果不发布。失败或撤销后可在原记录重试，追加新尝试、沿用冻结研究原始批次与口径，尝试历史（撤销原因、错误、旧统计）保留。worker 只在 `attempt_no` 与当前任务一致且尝试仍为 `running` 时发布结果，因此撤销/重试与旧计算并发时旧结果不会覆盖新尝试；重复领取同一尝试也只发布一次。复核与归档额外绑定 `attempt_id/attempt_no`，归档CSV始终导出其绑定尝试的结果。
+
 | 部分 | 技术 |
 |---|---|
 | 前端 | React18、TypeScript、Vite、真实SVG散点/边际/置换图 |
@@ -66,7 +68,7 @@ docker compose exec backend python -m scripts.seed_demo
 
 ## 边界与清理
 
-最多每批120条、API最多999次随机排列，不进行全枚举或多重校正。读数仅JSON表单导入；新口径需新研究，不覆盖已冻结统计。边际图共享每维合并范围分箱，只是观察视图，多元检验使用全部三维。单worker无生产级分布式租约，初始SQLAlchemy建表不含生产迁移回滚，无多租户隔离。模拟均值/方差/多峰不代表真实颜色质量或工艺变化原因。
+最多每批120条、API最多999次随机排列，不进行全枚举或多重校正。读数仅JSON表单导入；新口径需新研究，不覆盖已冻结统计。边际图共享每维合并范围分箱，只是观察视图，多元检验使用全部三维。单worker无生产级分布式租约；尝试领取的互斥依赖数据库行锁与Redis单队列，初始SQLAlchemy建表不含生产迁移回滚，无多租户隔离。模拟均值/方差/多峰不代表真实颜色质量或工艺变化原因。
 
 ```sh
 docker compose down -v --remove-orphans

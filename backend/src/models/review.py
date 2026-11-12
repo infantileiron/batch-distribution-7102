@@ -5,6 +5,8 @@ class ShiftReview(Base):
  __tablename__='shift_reviews'
  id:Mapped[str]=mapped_column(String,primary_key=True)
  run_id:Mapped[str]=mapped_column(ForeignKey('distribution_runs.id'))
+ attempt_id:Mapped[str|None]=mapped_column(ForeignKey('run_attempts.id'),nullable=True)
+ attempt_no:Mapped[int|None]=mapped_column(Integer,nullable=True)
  version:Mapped[int]=mapped_column(Integer)
  note:Mapped[str]=mapped_column(Text)
  decision:Mapped[str]=mapped_column(String)

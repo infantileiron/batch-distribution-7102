@@ -1,9 +1,16 @@
 import hashlib,json,statistics
 from src.services.permutation import permutation_test
+from src.services.cancellation import AttemptCancelled,AttemptSuperseded
 
-def analyze(snapshot):
+def analyze(snapshot,check=None):
  data=snapshot['dataset'];policy=snapshot['policy'];a=[[r[k] for k in ('l','a','b')] for r in data['batch_a']];b=[[r[k] for k in ('l','a','b')] for r in data['batch_b']]
- result=permutation_test(a,b,policy['permutations'],policy['seed'],policy['scaling'],policy['bandwidth'],policy['sigma'])
+ def progress():
+  if check is None:return
+  state=check()
+  if state:
+   if state[0]=='cancelled':raise AttemptCancelled(state[1] or '已撤销')
+   raise AttemptSuperseded()
+ result=permutation_test(a,b,policy['permutations'],policy['seed'],policy['scaling'],policy['bandwidth'],policy['sigma'],progress=progress)
  summaries=[]
  for label,rows in (('A',a),('B',b)):
   summaries.append({'batch':label,'n':len(rows),'mean':[statistics.fmean(x[j] for x in rows) for j in range(3)],'population_sd':[statistics.pstdev(x[j] for x in rows) for j in range(3)]})
